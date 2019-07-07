@@ -7,4 +7,20 @@
 
     <bean id="gui" class="springtraining.GUI" init-method="showGui"/>
 
+    <bean id="dbhandler" class="springtraining.DBHandler" init-method="initConnection" destroy-method="close">
+        <constructor-arg value="org.sqlite.JDBC" index="0" type="String"/>
+        <constructor-arg value="jdbc:sqlite:database\\trainingbase.db" index="1" type="String"/>
+        <constructor-arg ref="logger" index="2"/>
+    </bean>
+
+    <bean id="logger" class="springtraining.Logger" init-method="init" destroy-method="close">
+        <property name="Gui" ref="gui"/>
+    </bean>
+
+    <bean id="record" class="springtraining.Record" scope="prototype"/>
+
+    <bean id="record_generator" class="springtraining.RecordGenerator">
+        <lookup-method name="getRecord" bean="record"/>
+    </bean>
+
 </beans>
