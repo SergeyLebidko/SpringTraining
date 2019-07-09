@@ -7,12 +7,6 @@
 
     <bean id="gui" class="springtraining.GUI" init-method="showGui"/>
 
-    <bean id="dbhandler" class="springtraining.DBHandler" init-method="initConnection" destroy-method="close">
-        <constructor-arg value="org.sqlite.JDBC" index="0" type="String"/>
-        <constructor-arg value="jdbc:sqlite:database\\trainingbase.db" index="1" type="String"/>
-        <constructor-arg ref="logger" index="2"/>
-    </bean>
-
     <bean id="logger" class="springtraining.Logger" init-method="init" destroy-method="close">
         <property name="Gui" ref="gui"/>
     </bean>
@@ -21,6 +15,21 @@
 
     <bean id="record_generator" class="springtraining.RecordGenerator">
         <lookup-method name="getRecord" bean="record"/>
+    </bean>
+
+    <bean id="recordDao" class="springtraining.RecordDao">
+        <constructor-arg ref="jdbcTemplate"/>
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.sqlite.JDBC"/>
+        <property name="url" value="jdbc:sqlite:database\\trainingbase.db"/>
+        <property name="username" value=""/>
+        <property name="password" value=""/>
     </bean>
 
 </beans>

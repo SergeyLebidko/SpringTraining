@@ -3,35 +3,34 @@ package springtraining;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class MainClass {
 
     public static void main(String[] args) {
         ApplicationContext context = new ClassPathXmlApplicationContext("context.xml");
 
-        //Создаем интерфейс
+        //Создаем графический интерфейс
         GUI gui = (GUI) context.getBean("gui");
 
-        //Создаем подключение к БД
-        Logger logger = (Logger) context.getBean("logger");
-        DBHandler dbHandler = (DBHandler) context.getBean("dbhandler");
-        dbHandler.cleanTables();
+        //Работаем с БД
+        //Создаем объект для работы с БД
+        RecordDao recordDao = (RecordDao) context.getBean("recordDao");
 
-        //Генерируем список объектов
+        //Очищаем БД от имеющихся данных
+        recordDao.clearDataBase();
+
+        //Генерируем список объектов и записываем их в БД
         RecordGenerator generator = (RecordGenerator) context.getBean("record_generator");
         int listSize = 200;
-        List<Record> records = new LinkedList<>();
         for (int i = 0; i < listSize; i++) {
-            records.add(generator.getRecord());
+            recordDao.addRecord(generator.getRecord());
         }
-
-        //Записываем объекты в БД
-        dbHandler.addRecordsToBase(records);
 
         //Закрываем контекст
         ((ClassPathXmlApplicationContext) context).close();
+    }
+
+    private static void workDataBaseSpring(ApplicationContext context) {
+
     }
 
 }
