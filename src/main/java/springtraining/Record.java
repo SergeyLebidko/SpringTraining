@@ -71,6 +71,10 @@ public class Record {
         return count;
     }
 
+    public static int getCountLimit() {
+        return COUNT_LIMIT;
+    }
+
     @Override
     public String toString() {
         String idStr = String.format("%-8s", "id=" + id);

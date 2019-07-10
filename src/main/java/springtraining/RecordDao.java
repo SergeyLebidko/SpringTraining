@@ -63,6 +63,40 @@ public class RecordDao {
         transactionTemplate.execute(callbackWithoutResult);
     }
 
+    public void addRecordList(List<Record> list) {
+        TransactionCallbackWithoutResult callbackWithoutResult = new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus transactionStatus) {
+                String checkQuery = "SELECT COUNT(*) FROM RECORDS WHERE ID=?";
+                String insertQuery = "INSERT INTO RECORDS (ID, DATE, NAME, COUNT) VALUES(?,?,?,?)";
+                for (Record record : list) {
+                    //Проверяем, есть ли уже запись с таким ID
+                    RowMapper<Integer> mapRow = new RowMapper<Integer>() {
+                        @Override
+                        public Integer mapRow(ResultSet resultSet, int i) throws SQLException {
+                            return resultSet.getInt(1);
+                        }
+                    };
+
+                    //Если есть - выполняем откат
+                    int countRecord = jdbcTemplate.queryForObject(checkQuery, new Object[]{record.getId()}, mapRow);
+                    if (countRecord > 0) {
+                        transactionStatus.setRollbackOnly();
+                        logger.toLog("Запись " + record.toString() + " не добавлена. Выполняем откат транзакции!");
+                        return;
+                    }
+
+                    //Если нет - выполняем транзакцию
+                    jdbcTemplate.update(insertQuery, record.getId(), record.getDate(), record.getName(), record.getCount());
+
+                    logger.toLog("Добавляем запись: " + record.toString());
+                }
+                logger.toLog("Транзакция успешно завершена");
+            }
+        };
+        transactionTemplate.execute(callbackWithoutResult);
+    }
+
     public List getRecordsWithCountLimit(int countLimit) {
         TransactionCallback<List<Record>> transactionCallback = new TransactionCallback<List<Record>>() {
             @Override
