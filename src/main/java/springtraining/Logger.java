@@ -45,6 +45,9 @@ public class Logger {
     public void close() {
         try {
             channel.close();
+            if (gui != null) {
+                gui.print("Канал вывода в файл " + (channel.isOpen() ? "открыт" : "закрыт"));
+            }
         } catch (IOException e) {
             return;
         }

@@ -45,8 +45,4 @@ public class MainClass {
         ((ClassPathXmlApplicationContext) context).close();
     }
 
-    private static void workDataBaseSpring(ApplicationContext context) {
-
-    }
-
 }
