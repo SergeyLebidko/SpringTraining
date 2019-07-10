@@ -48,6 +48,13 @@ public class Record {
         count = rnd.nextInt(COUNT_LIMIT);
     }
 
+    public Record(int id, LocalDate date, String name, int count) {
+        this.id = id;
+        this.date = date;
+        this.name = name;
+        this.count = count;
+    }
+
     public int getId() {
         return id;
     }
